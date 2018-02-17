@@ -1,119 +1,128 @@
-/**
- * Time Displacement
- * by David Muth
- *
- * Keeps a buffer of video frames in memory and displays pixel rows
- * taken from consecutive frames distributed over the y-axis
- */
-
 import processing.video.*;
+import oscP5.*;
+import netP5.*;
 
 Capture video;
+OscP5 oscP5;
+NetAddress pdPatch;
 //the buffer for storing video frames
 ArrayList<PGraphics> frames = new ArrayList();
-final int MAX_BUFFER_SIZE = 24;
+final int MAX_BUFFER_SIZE = 60;
 int bufferSize = MAX_BUFFER_SIZE;
-
-int manyCount;
-int manyCountTarget = 1;
-boolean record = false;
+int frameIndex = 0;
 boolean newImage = false;
-PImage capturedImage;
+boolean record = false;
+FloatList selectedFrames;
+boolean inited = false;
+
+void settings(){
+    // fullScreen(P2D, 2);
+    // size(1920,1080, P2D, 2);
+    size(1440,900, P2D);
+
+}
+
+
 
 void setup() {
-  // size(640, 480);
-  // size(960, 540);
-  size(1920,1080, P2D);
+    frameRate(60);
+    textSize(24);
+    colorMode(HSB, 255);
 
-  // This the default video input, see the GettingStartedCapture
-  // example if it creates an error
-  video = new Capture(this, width, height, "/dev/video0", 30);
+    oscP5 = new OscP5(this,6666);
+    pdPatch = new NetAddress("127.0.0.1",6667);
+    // for(String _str : Capture.list()) println(_str);
+    video = new Capture(this, width, height, "/dev/video0", 60);
+    video.start();
+    makeFrames();
+}
 
-  // Start capturing the images from the camera
-  video.start();
-  frameRate(60);
-  colorMode(HSB, 255);
-  for(int i = 0; i < bufferSize; i++){
-      frames.add(createGraphics(width, height, P2D));
-  }
+
+void makeFrames(){
+    print("adding frames");
+    for(int i = 0; i < MAX_BUFFER_SIZE; i++){
+        PGraphics _pg = createGraphics(width, height, P2D);
+        _pg.beginDraw();
+        _pg.background(0,0);
+        _pg.endDraw();
+        frames.add(_pg);
+        print(".");
+    }
+    println();
+    selectedFrames = new FloatList();
+    selectedFrames.clear();
 }
 
 
 void draw() {
+    if(!inited){
+        background(0);
+        inited = true;
+        // makeFrames();
+    }
     if(newImage){
         newImage = false;
         PGraphics img = frames.get(frameIndex);
         img.beginDraw();
         img.image(video,0,0);
         img.endDraw();
-
         frameIndex++;
         frameIndex %= bufferSize;
-        // if(true){
-        //     frames.add(img);
-        //     // Once there are enough frames, remove the oldest one when adding a new one
-        //     if (frames.size() > bufferSize) {
-        //         frames.remove(0);
-        //     }
-        // }
-        // else {
-        //     if(frames.size() <= frameIndex) frames.add(img);
-        //     else {
-        //         frames.set(frameIndex, img);
-        //     }
-        //
-        // }
-    }
-
-    if(frameCount%8 == 1){
-        if(manyCount < manyCountTarget) manyCount++;
-        else if(manyCount > manyCountTarget) manyCount--;
     }
 
     background(0);
-    noTint();
-    image(video,0,0);
+    // blendMode(BLEND);
+    // fill(0, 23);
+    // rect(0,0,width,height);
+    // image(video,0,0);
 
-    int _frame = frameCount%bufferSize;
-    int _other = frameCount/10%bufferSize;
     blendMode(LIGHTEST);
-    for(int i = 0; i < manyCount; i++){
-        drawIndex(frameIndex+i*5);
-
+    FloatList _copy = selectedFrames;// new FloatList(selectedFrames);
+    for(int i = 0; i < _copy.size(); i++){
+        if(!Float.isNaN(_copy.get(i))){
+            image(frames.get(getFrameIndex(_copy.get(i))), 0, 0);
+        }
     }
-    // drawIndex((int)random(bufferSize));
 
     if(record) saveFrame("capture/frame-####.tiff");
     fill(255);
-    text(frameRate,10,10);
+    text(frameRate,10,24);
+    sendSync();
 }
 
-void drawIndex(int _index){
-    _index %= bufferSize;
-    if(_index < 0) _index= 0;
-
-    if(_index < frames.size()){
-        // if(_index%3 == 0) tint(255,0,0);
-        // if(_index%3 == 1) tint(0,255,0);
-        // if(_index%3 == 2) tint(0,0,255);
-        // tint((_index*3)%255,255,255);
-        image(frames.get(_index),0,0);
-    }
+int getFrameIndex(float _float){
+    _float *= MAX_BUFFER_SIZE;
+    _float += frameIndex;
+    _float %= MAX_BUFFER_SIZE;
+    return (int)_float;
 }
 
-int frameIndex = 0;
 void captureEvent(Capture camera) {
     camera.read();
     newImage = true;
 }
 
+void sendSync(){
+    OscMessage _mess = new OscMessage("/sampler/sync");
+    _mess.add(frameIndex); /* add an int to the osc message */
+    oscP5.send(_mess, pdPatch);
+}
+
+void oscEvent(OscMessage _mess) {
+    String _tag = _mess.typetag();
+    selectedFrames.clear();
+    for(int i = 0; i < _tag.length(); i++){
+        if(_tag.charAt(i) == 'f'){
+            selectedFrames.append(_mess.get(i).floatValue());
+        }
+        else if(_tag.charAt(i) == 'i'){
+            selectedFrames.append((float)_mess.get(i).intValue());
+        }
+    }
+}
 
 void keyPressed(){
-    if(key == 32){
-        if(manyCountTarget == 16) manyCountTarget = 1;
-        else if(manyCountTarget == 1) manyCountTarget = 16;
-    }
-    else if(key == 'c'){
+    if(key == 'c'){
         record = !record;
     }
 }
