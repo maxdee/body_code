@@ -19,10 +19,8 @@ void settings(){
     // fullScreen(P2D, 2);
     // size(1920,1080, P2D, 2);
     size(1440,900, P2D);
-
+    // size(640,480, P2D);
 }
-
-
 
 void setup() {
     frameRate(60);
@@ -32,7 +30,7 @@ void setup() {
     oscP5 = new OscP5(this,6666);
     pdPatch = new NetAddress("127.0.0.1",6667);
     // for(String _str : Capture.list()) println(_str);
-    video = new Capture(this, width, height, "/dev/video0", 60);
+    video = new Capture(this, width, height, "/dev/video1", 60);
     video.start();
     makeFrames();
 }
@@ -50,7 +48,8 @@ void makeFrames(){
     }
     println();
     selectedFrames = new FloatList();
-    selectedFrames.clear();
+    selectedFrames.append(0.0);
+    // selectedFrames.clear();
 }
 
 
@@ -61,13 +60,13 @@ void draw() {
         // makeFrames();
     }
     if(newImage){
+        frameIndex++;
+        frameIndex %= bufferSize;
         newImage = false;
         PGraphics img = frames.get(frameIndex);
         img.beginDraw();
         img.image(video,0,0);
         img.endDraw();
-        frameIndex++;
-        frameIndex %= bufferSize;
     }
 
     background(0);
@@ -91,6 +90,7 @@ void draw() {
 }
 
 int getFrameIndex(float _float){
+    _float = abs(_float);
     _float *= MAX_BUFFER_SIZE;
     _float += frameIndex;
     _float %= MAX_BUFFER_SIZE;
