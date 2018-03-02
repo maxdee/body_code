@@ -1,0 +1,7 @@
+#N canvas 737 620 450 300 10;
+#X obj 100 103 lc_but \$1 9;
+#X obj 266 151 lctl_but \$1 116 10;
+#X obj 249 103 lctl_tog \$1 114 10;
+#X obj 299 67 lctl_tog \$1 115 10;
+#X obj 291 191 lctl_tog \$1 117 10;
+#X coords 0 -1 1 1 106 60 1 100 100;
