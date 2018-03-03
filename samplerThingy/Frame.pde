@@ -25,6 +25,7 @@ class Frame {
 
     void overLay(PGraphics _pg){
         fbo.beginDraw();
+        fbo.blendMode(blendMode);
         fbo.image(_pg, 0, 0);
         fbo.endDraw();
     }

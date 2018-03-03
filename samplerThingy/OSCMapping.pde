@@ -19,6 +19,7 @@ void oscEvent(OscMessage _mess) {
         }
         // println(selectedFrames);
     }
+    // else if(_mess.checkAddrPattern("/sampler/shaker")){
     else if(_mess.checkAddrPattern("/sampler/shaker")){
         shaker = _mess.get(0).floatValue();
     }

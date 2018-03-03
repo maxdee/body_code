@@ -21,6 +21,8 @@ FloatList selectedFrames;
 float shaker = 0;
 PVector center;
 boolean clearFramesFlag = false;
+boolean hadNewFrame = false;
+
 
 // shader uniforms
 boolean mirrorMode = false;
@@ -43,7 +45,7 @@ void settings(){
 }
 
 void setup() {
-    frameRate(60);
+    frameRate(30);
     textSize(24);
     // set OSC
     oscP5 = new OscP5(this,6666);
@@ -85,12 +87,11 @@ void clearFrames(){
 
 void draw() {
     updateVideo();
-
     if(clearFramesFlag){
         clearFrames();
         clearFramesFlag = false;
     }
-    center.set(mouseX, mouseY);
+    center.set(width/2, height/2-40);
     background(0);
     pushMatrix();
     translate(center.x,center.y);
@@ -133,6 +134,7 @@ void updateVideo(){
         else if(frameCount % recordRate == 0){
             recordHead++;
             recordHead %= bufferSize;
+            hadNewFrame = true;
         }
     }
 }
@@ -144,7 +146,14 @@ void displaySelected(){
         image(processedBuffer,-center.x, -center.y);
     }
 
-    FloatList _copy = selectedFrames;// new FloatList(selectedFrames);
+    FloatList _copy = new FloatList();
+    for(int i = 0; i < selectedFrames.size(); i++){
+        _copy.append(selectedFrames.get(i));
+    }
+    // _copy = selectedFrames.copy().sort();// new FloatList(selectedFrames);
+    // _copy = selectedFrames.copy().sortReverse();// new FloatList(selectedFrames);
+
+    int _mid = _copy.size()/2;
     for(int i = 0; i < _copy.size(); i++){
         scale(1.0+random(shaker)/20.0);
         if(!Float.isNaN(_copy.get(i))){
@@ -152,15 +161,16 @@ void displaySelected(){
             Frame _tmp = frames.get(_index);
             image(_tmp.get(), -center.x, -center.y);
         }
-        if(drawInput == i){
+        if(drawInput == _mid && drawInput != 0){
             image(processedBuffer,-center.x, -center.y);
         }
     }
     if(drawInput == 9){
         image(processedBuffer,-center.x, -center.y);
     }
-    if(playbackRate == 0){
 
+    // this is important
+    if(playbackRate == 0){
     }
     else if(frameCount % playbackRate == 0){
         playbackIncrement++;
@@ -172,7 +182,7 @@ void displaySelected(){
 int getFrameIndex(float _float){
     _float = abs(_float);
     _float *= MAX_BUFFER_SIZE;
-    _float += playbackIncrement;
+    _float += (playbackRate == 1 ? recordHead : 0);// playbackIncrement;
     _float %= MAX_BUFFER_SIZE;
     return (int)_float;
 }
