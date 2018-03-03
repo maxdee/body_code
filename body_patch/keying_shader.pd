@@ -1,25 +1,34 @@
-#N canvas 318 1193 1078 663 10;
+#N canvas 432 257 1078 663 10;
 #X obj 266 372 s samplerOSC;
 #X msg 200 181 sendtyped /sampler/testMode i \$1;
 #X msg 300 152 sendtyped /sampler/mirror i \$1;
-#X obj 230 7 tgl 20 0 empty empty mirror 21 9 0 10 -45772 -262144 -262144
-0 1;
+#X obj 230 33 tgl 20 0 empty empty mirror 21 9 0 10 -45772 -262144
+-262144 0 1;
 #X msg 172 259 sendtyped /sampler/sourceMix f \$1;
-#X obj 87 7 hsl 128 20 0 127 0 0 empty empty sourceMix 70 9 0 10 -62416
+#X obj 87 33 hsl 128 20 0 127 0 0 empty empty sourceMix 70 9 0 10 -62416
 -262144 -245500 0 1;
 #X obj 172 234 / 127;
 #X obj 93 290 / 127;
 #X msg 93 312 sendtyped /sampler/threshold f \$1;
-#X obj 87 31 hsl 128 20 0 127 0 0 empty empty threshold 70 9 0 10 -62416
+#X obj 87 57 hsl 128 20 0 127 0 0 empty empty threshold 70 9 0 10 -62416
 -262144 -245500 500 1;
-#X obj 297 6 bng 20 250 50 0 empty empty reload 20 8 0 10 -200705 -1
--262144;
-#X msg 392 86 /sampler/reloadShader;
-#X obj 230 31 tgl 20 0 empty empty test 21 9 0 10 -45772 -262144 -262144
-1 1;
+#X obj 297 32 bng 20 250 50 0 empty empty reload 20 8 0 10 -200705
+-1 -262144;
+#X msg 397 104 /sampler/reloadShader;
+#X obj 230 57 tgl 20 0 empty empty test 21 9 0 10 -45772 -262144 -262144
+0 1;
 #X obj 12 -103 r init;
 #X msg 20 -79 0;
 #X msg 12 -3 5;
+#X obj 541 -49 r ctls;
+#X obj 541 -27 route \$1;
+#X obj 541 -5 route 21;
+#X obj 298 57 tgl 20 0 empty empty green 22 7 0 10 -46657 -262144 -39489
+0 1;
+#X msg 187 -70 0;
+#X msg 350 126 sendtyped /sampler/green i \$1;
+#X obj 253 -71 r presets;
+#X obj 253 -49 route sourceMix threshold mirror test green;
 #X connect 1 0 0 0;
 #X connect 2 0 0 0;
 #X connect 3 0 2 0;
@@ -34,6 +43,19 @@
 #X connect 12 0 1 0;
 #X connect 13 0 14 0;
 #X connect 13 0 15 0;
+#X connect 13 0 20 0;
 #X connect 14 0 5 0;
 #X connect 15 0 9 0;
-#X coords 0 -1 1 1 274 51 2 83 3;
+#X connect 16 0 17 0;
+#X connect 17 0 18 0;
+#X connect 18 0 5 0;
+#X connect 19 0 21 0;
+#X connect 20 0 19 0;
+#X connect 21 0 0 0;
+#X connect 22 0 23 0;
+#X connect 23 0 5 0;
+#X connect 23 1 9 0;
+#X connect 23 2 3 0;
+#X connect 23 3 12 0;
+#X connect 23 4 19 0;
+#X coords 0 -1 1 1 301 78 1 83 3;

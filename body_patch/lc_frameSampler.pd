@@ -1,7 +1,11 @@
-#N canvas 737 620 450 300 10;
-#X obj 100 103 lc_but \$1 9;
-#X obj 266 151 lctl_but \$1 116 10;
-#X obj 249 103 lctl_tog \$1 114 10;
-#X obj 299 67 lctl_tog \$1 115 10;
-#X obj 291 191 lctl_tog \$1 117 10;
-#X coords 0 -1 1 1 106 60 1 100 100;
+#N canvas 506 1508 842 345 10;
+#X obj 103 103 lc_but \$1 9;
+#X obj 130 103 lc_but \$1 10;
+#X obj 157 103 lc_but \$1 11;
+#X obj 184 103 lc_but \$1 12;
+#X obj 211 103 lc_but \$1 25;
+#X obj 238 103 lc_but \$1 26;
+#X obj 265 103 lc_but \$1 27;
+#X obj 292 103 lc_but \$1 28;
+#X obj 446 145 lctl_but \$1 116 10;
+#X coords 0 -1 1 1 217 114 1 100 100;

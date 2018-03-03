@@ -1,0 +1,70 @@
+#N canvas 580 245 1021 565 10;
+#X obj 81 463 comport;
+#X obj 293 111 tgl 15 0 empty empty connect 17 7 0 10 -91543 -262144
+-262144 1 1;
+#X obj 104 383 sel 0 1;
+#X msg 104 405 close;
+#X obj 29 328 r camera;
+#X obj 345 377 s camera;
+#X obj 148 291 int;
+#X msg 489 187 8 8;
+#X msg 148 314 2 \$1;
+#X msg 115 430 devicename /dev/ttyACM0 9600;
+#X obj 22 387 speedlim 40;
+#X obj 356 130 bng 20 250 50 0 empty empty reset 21 7 0 10 -180251
+-1 -262144;
+#X obj 155 130 hsl 128 20 0 127 0 0 empty empty saturation 36 8 0 10
+-296 -1 -262144 0 1;
+#X obj 155 155 hsl 128 20 0 127 0 0 empty empty gamma 36 8 0 10 -54094
+-1 -262144 0 1;
+#X obj 180 239 int;
+#X msg 180 262 3 \$1;
+#X obj 175 -4 r init;
+#X msg 175 33;
+#X msg 70 46 1;
+#X obj 293 155 hsl 128 20 0 127 0 0 empty empty gain 36 8 0 10 -147457
+-1 -262144 0 1;
+#X obj 320 240 int;
+#X msg 321 263 4 \$1;
+#X msg 379 272 5 5;
+#X obj 293 130 bng 20 250 50 0 empty empty trigger 21 7 0 10 -108187
+-1 -262144;
+#X obj 548 298 hsl 128 20 0 127 0 0 empty empty apertur 36 8 0 10 -21825
+-1 -262144 0 1;
+#X obj 550 332 int;
+#X msg 551 355 7 \$1;
+#X obj 249 26 r presets;
+#X obj 249 48 route saturation gamma gain trigger reset;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 1 9 0;
+#X connect 3 0 0 0;
+#X connect 4 0 10 0;
+#X connect 6 0 8 0;
+#X connect 7 0 5 0;
+#X connect 8 0 5 0;
+#X connect 9 0 0 0;
+#X connect 10 0 0 0;
+#X connect 11 0 7 0;
+#X connect 12 0 6 0;
+#X connect 13 0 14 0;
+#X connect 14 0 15 0;
+#X connect 15 0 5 0;
+#X connect 16 0 17 0;
+#X connect 16 0 18 0;
+#X connect 18 0 1 0;
+#X connect 19 0 20 0;
+#X connect 20 0 21 0;
+#X connect 21 0 5 0;
+#X connect 22 0 5 0;
+#X connect 23 0 22 0;
+#X connect 24 0 25 0;
+#X connect 25 0 26 0;
+#X connect 26 0 5 0;
+#X connect 27 0 28 0;
+#X connect 28 0 12 0;
+#X connect 28 1 13 0;
+#X connect 28 2 19 0;
+#X connect 28 3 23 0;
+#X connect 28 4 11 0;
+#X coords 0 -1 1 1 279 80 1 152 100;
